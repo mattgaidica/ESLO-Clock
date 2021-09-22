@@ -80,7 +80,8 @@ class ViewController: UIViewController,CBPeripheralManagerDelegate {
 
     func startAdvertising() {
         MessageLabel.text = "Advertising"
-        peripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey : "ESLOTime", CBAdvertisementDataServiceUUIDsKey : [service]])
+        let str = String(decoding: getClockData(), as: UTF8.self)
+        peripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey : str, CBAdvertisementDataServiceUUIDsKey : [service]])
         print("Started Advertising")
     }
     
