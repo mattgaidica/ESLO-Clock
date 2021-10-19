@@ -6,14 +6,24 @@
 
 import UIKit
 import CoreBluetooth
+import CoreLocation
 
-class ViewController: UIViewController,CBPeripheralManagerDelegate {
+class ViewController: UIViewController,CBPeripheralManagerDelegate,CLLocationManagerDelegate {
     @IBOutlet weak var ClockLabel: UILabel!
     @IBOutlet weak var MessageLabel: UILabel!
     @IBOutlet weak var ClockIntegerLabel: UILabel!
     @IBOutlet weak var TransmitImage: UIImageView!
+    @IBOutlet weak var LatLongLabel: UILabel!
+    @IBOutlet weak var Base1Label: UILabel!
+    @IBOutlet weak var Base2Label: UILabel!
+    @IBOutlet weak var Base3Label: UILabel!
+    @IBOutlet weak var Base4Label: UILabel!
+    @IBOutlet weak var Base5Label: UILabel!
+    @IBOutlet weak var Base6Label: UILabel!
+    @IBOutlet weak var DateTimeLabel: UILabel!
     
     // init
+    let locationManager = CLLocationManager()
     private var service: CBUUID!
     private var myCharacteristic: CBMutableCharacteristic!
     private var value:UInt32 = 0
@@ -22,7 +32,21 @@ class ViewController: UIViewController,CBPeripheralManagerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.locationManager.requestAlwaysAuthorization()
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.startUpdatingLocation()
+        }
         peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let locValue:CLLocationCoordinate2D = manager.location!.coordinate
+        let locations = "\(locValue.latitude), \(locValue.longitude)"
+        LatLongLabel.text = locations
     }
     
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
@@ -106,6 +130,32 @@ class ViewController: UIViewController,CBPeripheralManagerDelegate {
             self.peripheralManager.stopAdvertising()
             self.peripheralManager.removeAllServices()
             self.addServices()
+            
+            let now = Date()
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .medium
+            let datetime = formatter.string(from: now)
+            self.DateTimeLabel.text = datetime
+            
         }
+    }
+    @IBAction func BaseStation1(_ sender: Any) {
+        Base1Label.text = LatLongLabel.text
+    }
+    @IBAction func BaseStation2(_ sender: Any) {
+        Base2Label.text = LatLongLabel.text
+    }
+    @IBAction func BaseStation3(_ sender: Any) {
+        Base3Label.text = LatLongLabel.text
+    }
+    @IBAction func BaseStation4(_ sender: Any) {
+        Base4Label.text = LatLongLabel.text
+    }
+    @IBAction func BaseStation5(_ sender: Any) {
+        Base5Label.text = LatLongLabel.text
+    }
+    @IBAction func BaseStation6(_ sender: Any) {
+        Base6Label.text = LatLongLabel.text
     }
 }
