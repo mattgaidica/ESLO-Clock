@@ -104,14 +104,21 @@ class ViewController: UIViewController,CBPeripheralManagerDelegate,CLLocationMan
 
     func startAdvertising() {
         MessageLabel.text = "Advertising"
-        let str = String(decoding: getClockData(), as: UTF8.self)
+        // TI BLE wants to read this as ascii, so it gets encoded/decoded
+        let str = String(format: "%llX", getClockUInt32())
+        // trying to use local name key as a dynamic data field
         peripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey : str, CBAdvertisementDataServiceUUIDsKey : [service]])
         print("Started Advertising")
     }
     
-    func getClockData() -> Data {
+    func getClockUInt32() -> UInt32 {
         let secondsSince1970 = NSDate().timeIntervalSince1970
         value = UInt32(secondsSince1970)
+        return value
+    }
+    
+    func getClockData() -> Data {
+        value = getClockUInt32()
         let valueData = Data(bytes: &value, count: MemoryLayout.size(ofValue: value))
         ClockLabel.text = String(format: "0x%llX", value)
         ClockIntegerLabel.text = String(value)
@@ -137,7 +144,6 @@ class ViewController: UIViewController,CBPeripheralManagerDelegate,CLLocationMan
             formatter.timeStyle = .medium
             let datetime = formatter.string(from: now)
             self.DateTimeLabel.text = datetime
-            
         }
     }
     @IBAction func BaseStation1(_ sender: Any) {
