@@ -1,2 +1,2 @@
-# BLEPeripheral
-Project that creates a application which acts as a BLE Peripheral.
+# Base Station / Clock
+Acts as a 32-bit clock peripheral for time syncing. Also provides GPS interface to mark lat/long of base stations.
